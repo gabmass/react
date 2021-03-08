@@ -66,20 +66,6 @@ jobs:
           paths:
             - node_modules
 
-  yarn_lint:
-    docker: *docker
-    environment: *environment
-
-    steps:
-      - checkout
-      - run: yarn workspaces info | head -n -1 > workspace_info.txt
-      - *restore_node_modules
-      - run: node ./scripts/prettier/index
-      - run: node ./scripts/tasks/eslint
-      - run: ./scripts/circleci/check_license.sh
-      - run: ./scripts/circleci/check_modules.sh
-      - run: ./scripts/circleci/test_print_warnings.sh
-
   yarn_flow:
     docker: *docker
     environment: *environment
@@ -399,9 +385,6 @@ workflows:
     unless: << pipeline.parameters.prerelease_commit_sha >>
     jobs:
       - setup
-      - yarn_lint:
-          requires:
-            - setup
       - RELEASE_CHANNEL_stable_yarn_build:
           requires:
             - setup
